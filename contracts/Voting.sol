@@ -51,4 +51,7 @@ contract Voting {
         }
         return votingEnd - block.timestamp;
     }
+    function getOwner() public view returns (address) {
+        return owner;
+    }
 }

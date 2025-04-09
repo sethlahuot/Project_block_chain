@@ -1,5 +1,5 @@
 let WALLET_CONNECTED= '';
-let contractAddress = "0x428DD52a4cb3df58B8be5047Af2d3ff4978Dfa35";
+let contractAddress = "0x47812AEbc3e70619e922dAA7b2bf4D9C51cCeF5B";
 let contractAbi= [
     {
       "inputs": [
@@ -74,6 +74,19 @@ let contractAbi= [
           "internalType": "struct Voting.Candidate[]",
           "name": "",
           "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -181,9 +194,45 @@ const connectMetamask = async() => {
     notification.style.display = 'block';
     notification.innerHTML = "Metamask is connected: " + WALLET_CONNECTED;
 
+    // Check if connected wallet is owner
+    await checkOwner();
+
     // Call voteStatus and getAllCandidates after successful connection
     await voteStatus();
     await getAllCandidates();
+}
+
+const checkOwner = async() => {
+    if(WALLET_CONNECTED !== '') {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
+        
+        try {
+            const owner = await contractInstance.getOwner();
+            const isOwner = owner.toLowerCase() === WALLET_CONNECTED.toLowerCase();
+            
+            // Show/hide the add candidate form based on ownership
+            const addCandidateForm = document.querySelector('#services .row.mb-5');
+            if (addCandidateForm) {
+                addCandidateForm.style.display = isOwner ? 'flex' : 'none';
+            }
+
+            // Update the notification to show owner status
+            const notification = document.getElementById("metamasknotification");
+            if (notification) {
+                const ownerStatus = isOwner ? " (Owner)" : " (Voter)";
+                notification.innerHTML = "Metamask is connected: " + WALLET_CONNECTED + ownerStatus;
+            }
+        } catch (error) {
+            console.error("Error checking owner:", error);
+            // If there's an error, keep the form hidden
+            const addCandidateForm = document.querySelector('#services .row.mb-5');
+            if (addCandidateForm) {
+                addCandidateForm.style.display = 'none';
+            }
+        }
+    }
 }
 
 const getAllCandidates = async() => {
