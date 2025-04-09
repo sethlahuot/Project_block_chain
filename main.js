@@ -319,7 +319,7 @@ const addVote = async() => {
             if (error.code === 4001) {
                 cand.innerHTML = "Transaction was rejected by user";
             } else {
-                cand.innerHTML = "Error adding vote: " + error.message;
+                cand.innerHTML = "Error adding vote: Please Vote again ";
             }
         }
     }
@@ -361,20 +361,17 @@ const addCandidate = async() => {
                 alert("Please enter a candidate name");
                 return;
             }
-
             const tx = await contractInstance.addCandidate(candidateName);
             await tx.wait();
-            
             // Clear the input field
             document.querySelector('input[name="candidateName"]').value = '';
-            
             // Refresh the candidates list
             await getAllCandidates();
             
             alert("Candidate added successfully!");
         } catch (error) {
             console.error("Error adding candidate:", error);
-            alert("Error adding candidate. Make sure you are the contract owner.");
+            alert("Error adding candidate: Please Add Candidate.");
         }
     } else {
         alert("Please connect MetaMask first");
