@@ -2,7 +2,7 @@ const hre = require("hardhat");
 async function main() {
 
 const Voting = await hre.ethers.getContractFactory("Voting");
-const Voting_ = await Voting.deploy(["Mark", "Mike", "Henry", "Rock"], 3600);
+const Voting_ = await Voting.deploy(["Hout Hengsela", "Kan Sok Mean", "Neak Lyheng", "Heng Sovanrith"], 3600);
 
 await Voting_.deployed();
 console.log(

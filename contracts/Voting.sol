@@ -41,9 +41,11 @@ contract Voting {
     function getAllVotesOfCandidates() public view returns (Candidate[] memory) {
         return candidates;
     }
+    
     function getVotingStatus() public view returns (bool) {
         return (block.timestamp>=votingStart && block.timestamp < votingEnd);
     }
+
     function getRemainingTime() public view returns (uint256) {
         require(block.timestamp >= votingStart, "Voting has not started yet !!");
         if(block.timestamp >= votingEnd) {
